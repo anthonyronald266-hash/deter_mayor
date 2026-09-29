@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SENATI - Ejercicio 2: Determinar Número Mayor</title>
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --border-color: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --accent: #8b5cf6;
+      --input-bg: #090d16;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 2rem;
+      max-width: 800px;
+      width: 100%;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .container {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 900px;
+      width: 100%;
+    }
+
+    @media (min-width: 768px) {
+      .container {
+        grid-template-columns: 360px 1fr;
+      }
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .card h2 {
+      font-size: 1.1rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.5rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      color: var(--text-main);
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+
+    button {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: background-color 0.2s, transform 0.1s;
+    }
+
+    button:active {
+      transform: scale(0.98);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-secondary:hover {
+      background-color: #475569;
+    }
+
+    .max-display-box {
+      background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.15));
+      border: 1px solid rgba(59, 130, 246, 0.4);
+      border-radius: 10px;
+      padding: 1.25rem;
+      text-align: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .max-display-box .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 0.25rem;
+    }
+
+    .max-display-box .value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #60a5fa;
+      font-family: monospace;
+      line-height: 1.2;
+    }
+
+    .max-display-box .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-main);
+      margin-top: 0.35rem;
+      font-weight: 500;
+    }
+
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .num-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: var(--input-bg);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .num-row.is-max {
+      border-color: var(--primary);
+      background-color: rgba(59, 130, 246, 0.08);
+    }
+
+    .num-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .num-tag {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: var(--card-bg);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid var(--border-color);
+    }
+
+    .num-val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: monospace;
+    }
+
+    .badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-max {
+      background-color: rgba(16, 185, 129, 0.2);
+      color: #34d399;
+      border: 1px solid var(--success);
+    }
+
+    .badge-tie {
+      background-color: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+      border: 1px solid var(--warning);
+    }
+
+    .badge-regular {
+      background-color: rgba(148, 163, 184, 0.15);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .alert {
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .alert.show {
+      display: block;
+    }
+
+    .alert-danger {
+      background-color: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--danger);
+      color: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>SENATI - Algoritmos y Programación</h1>
+    <p>Práctica Dirigida Nivel 1 • Ejercicio 02: Determinar el Número Mayor entre 03 Valores</p>
+  </header>
+
+  <div class="container">
+    
+    <div class="card">
+      <h2>📥 Ingreso de Datos</h2>
+      <form id="maxForm" onsubmit="return false;">
+        <div class="form-group">
+          <label for="num1">Primer Número (N1):</label>
+          <input type="number" id="num1" step="any" placeholder="Ej. 15" required>
+        </div>
+
+        <div class="form-group">
+          <label for="num2">Segundo Número (N2):</label>
+          <input type="number" id="num2" step="any" placeholder="Ej. 42" required>
+        </div>
+
+        <div class="form-group">
+          <label for="num3">Tercer Número (N3):</label>
+          <input type="number" id="num3" step="any" placeholder="Ej. 28" required>
+        </div>
+
+        <div class="btn-group">
+          <button type="button" class="btn-primary" id="btnCalcular">Determinar Mayor</button>
+          <button type="button" class="btn-secondary" id="btnLimpiar">Limpiar</button>
+        </div>
+      </form>
+
+      <div id="alertBox" class="alert alert-danger"></div>
+    </div>
+
+    <div class="card">
+      <h2>🏆 Resultado y Comparativa</h2>
+      
+      <div class="max-display-box">
+        <div class="label">Valor Máximo Encontrado</div>
+        <div class="value" id="maxVal">--</div>
+        <div class="subtitle" id="maxStatus">Ingrese los 03 números y presione 'Determinar Mayor'</div>
+      </div>
+
+      <div class="breakdown-list">
+        <div class="num-row" id="rowN1">
+          <div class="num-info">
+            <span class="num-tag">N1</span>
+            <span class="num-val" id="valN1">--</span>
+          </div>
+          <span class="badge badge-regular" id="badgeN1">Pendiente</span>
+        </div>
+
+        <div class="num-row" id="rowN2">
+          <div class="num-info">
+            <span class="num-tag">N2</span>
+            <span class="num-val" id="valN2">--</span>
+          </div>
+          <span class="badge badge-regular" id="badgeN2">Pendiente</span>
+        </div>
+
+        <div class="num-row" id="rowN3">
+          <div class="num-info">
+            <span class="num-tag">N3</span>
+            <span class="num-val" id="valN3">--</span>
+          </div>
+          <span class="badge badge-regular" id="badgeN3">Pendiente</span>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Inputs
+      const num1Input = document.getElementById('num1');
+      const num2Input = document.getElementById('num2');
+      const num3Input = document.getElementById('num3');
+      
+      // Buttons
+      const btnCalcular = document.getElementById('btnCalcular');
+      const btnLimpiar = document.getElementById('btnLimpiar');
+
+      // Displays
+      const maxVal = document.getElementById('maxVal');
+      const maxStatus = document.getElementById('maxStatus');
+      const alertBox = document.getElementById('alertBox');
+
+      // Rows & Values
+      const rowN1 = document.getElementById('rowN1');
+      const rowN2 = document.getElementById('rowN2');
+      const rowN3 = document.getElementById('rowN3');
+
+      const valN1 = document.getElementById('valN1');
+      const valN2 = document.getElementById('valN2');
+      const valN3 = document.getElementById('valN3');
+
+      const badgeN1 = document.getElementById('badgeN1');
+      const badgeN2 = document.getElementById('badgeN2');
+      const badgeN3 = document.getElementById('badgeN3');
+
+      function formatNumber(num) {
+        if (Number.isInteger(num)) return num.toString();
+        return parseFloat(num.toFixed(4)).toString();
+      }
+
+      function showError(msg) {
+        if (msg) {
+          alertBox.textContent = msg;
+          alertBox.classList.add('show');
+        } else {
+          alertBox.classList.remove('show');
+        }
+      }
+
+      function determinarMayor() {
+        const v1 = num1Input.value.trim();
+        const v2 = num2Input.value.trim();
+        const v3 = num3Input.value.trim();
+
+        if (v1 === '' || v2 === '' || v3 === '') {
+          showError('Por favor complete los tres (03) campos numéricos.');
+          return;
+        }
+
+        const n1 = parseFloat(v1);
+        const n2 = parseFloat(v2);
+        const n3 = parseFloat(v3);
+
+        if (isNaN(n1) || isNaN(n2) || isNaN(n3)) {
+          showError('Por favor ingrese valores numéricos válidos.');
+          return;
+        }
+
+        showError(null);
+
+        // Actualizar valores en lista
+        valN1.textContent = formatNumber(n1);
+        valN2.textContent = formatNumber(n2);
+        valN3.textContent = formatNumber(n3);
+
+        // Encontrar el valor máximo
+        const max = Math.max(n1, n2, n3);
+        maxVal.textContent = formatNumber(max);
+
+        // Identificar cuáles números coinciden con el máximo
+        const isN1Max = (n1 === max);
+        const isN2Max = (n2 === max);
+        const isN3Max = (n3 === max);
+
+        const countMax = [isN1Max, isN2Max, isN3Max].filter(Boolean).length;
+
+        // Reset classes
+        rowN1.classList.remove('is-max');
+        rowN2.classList.remove('is-max');
+        rowN3.classList.remove('is-max');
+
+        if (countMax === 3) {
+          // Todos son iguales
+          maxStatus.textContent = 'Los tres números son exactamente iguales.';
+          
+          setRowState(rowN1, badgeN1, true, 'Igual', 'badge-tie');
+          setRowState(rowN2, badgeN2, true, 'Igual', 'badge-tie');
+          setRowState(rowN3, badgeN3, true, 'Igual', 'badge-tie');
+
+        } else if (countMax === 2) {
+          // Empate en el mayor
+          let empados = [];
+          if (isN1Max) empados.push('N1');
+          if (isN2Max) empados.push('N2');
+          if (isN3Max) empados.push('N3');
+
+          maxStatus.textContent = `Empate en el valor máximo entre ${empados.join(' y ')}.`;
+
+          setRowState(rowN1, badgeN1, isN1Max, isN1Max ? 'Empate Mayor' : 'Menor', isN1Max ? 'badge-tie' : 'badge-regular');
+          setRowState(rowN2, badgeN2, isN2Max, isN2Max ? 'Empate Mayor' : 'Menor', isN2Max ? 'badge-tie' : 'badge-regular');
+          setRowState(rowN3, badgeN3, isN3Max, isN3Max ? 'Empate Mayor' : 'Menor', isN3Max ? 'badge-tie' : 'badge-regular');
+
+        } else {
+          // Un único mayor absoluto
+          let mayorNombre = isN1Max ? 'N1' : (isN2Max ? 'N2' : 'N3');
+          maxStatus.textContent = `El número ${mayorNombre} es estrictamente el mayor.`;
+
+          setRowState(rowN1, badgeN1, isN1Max, isN1Max ? 'El Mayor' : 'Menor', isN1Max ? 'badge-max' : 'badge-regular');
+          setRowState(rowN2, badgeN2, isN2Max, isN2Max ? 'El Mayor' : 'Menor', isN2Max ? 'badge-max' : 'badge-regular');
+          setRowState(rowN3, badgeN3, isN3Max, isN3Max ? 'El Mayor' : 'Menor', isN3Max ? 'badge-max' : 'badge-regular');
+        }
+      }
+
+      function setRowState(rowEl, badgeEl, isMax, text, badgeClass) {
+        if (isMax) rowEl.classList.add('is-max');
+        badgeEl.textContent = text;
+        badgeEl.className = `badge ${badgeClass}`;
+      }
+
+      function limpiar() {
+        num1Input.value = '';
+        num2Input.value = '';
+        num3Input.value = '';
+
+        maxVal.textContent = '--';
+        maxStatus.textContent = "Ingrese los 03 números y presione 'Determinar Mayor'";
+
+        valN1.textContent = '--';
+        valN2.textContent = '--';
+        valN3.textContent = '--';
+
+        rowN1.classList.remove('is-max');
+        rowN2.classList.remove('is-max');
+        rowN3.classList.remove('is-max');
+
+        badgeN1.textContent = 'Pendiente';
+        badgeN1.className = 'badge badge-regular';
+        badgeN2.textContent = 'Pendiente';
+        badgeN2.className = 'badge badge-regular';
+        badgeN3.textContent = 'Pendiente';
+        badgeN3.className = 'badge badge-regular';
+
+        showError(null);
+        num1Input.focus();
+      }
+
+      btnCalcular.addEventListener('click', determinarMayor);
+      btnLimpiar.addEventListener('click', limpiar);
+
+      // Permitir presionar Enter para calcular
+      [num1Input, num2Input, num3Input].forEach(input => {
+        input.addEventListener('keyup', (e) => {
+          if (e.key === 'Enter') determinarMayor();
+        });
+      });
+    });
+  </script>
+</body>
+</html>
